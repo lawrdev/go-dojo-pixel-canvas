@@ -2,6 +2,8 @@ package ui
 
 import (
 	"errors"
+	"go_dojo/pixl/util"
+	"image"
 	"image/png"
 	"os"
 	"strconv"
@@ -111,10 +113,40 @@ func BuildNewMenu(app *AppInit) *fyne.MenuItem {
 	})
 }
 
+func BuildOpenMenu(app *AppInit) *fyne.MenuItem {
+	return fyne.NewMenuItem("Open File", func() {
+		dialog.ShowFileOpen(func(uri fyne.URIReadCloser, err error) {
+			if uri == nil {
+				return
+			} else {
+				image, _, err := image.Decode(uri)
+				if err != nil {
+					dialog.ShowError(err, app.PixlWindow)
+					return
+				}
+				app.PixlCanvas.LoadImage(image)
+				app.State.SetFilePath(uri.URI().Path())
+				// get colors out of the image
+				imgColors := util.GetImageColors(image)
+				i := 0
+				for c := range imgColors {
+					if i == len(app.Swatches) {
+						break
+					}
+					app.Swatches[i].SetColor(c)
+					i++
+				}
+
+			}
+		}, app.PixlWindow)
+	})
+}
+
 func BuildMenus(app *AppInit) *fyne.Menu {
 	return fyne.NewMenu(
 		"File",
 		BuildNewMenu(app),
+		BuildOpenMenu(app),
 		BuildSaveAsMenu(app),
 		BuildSaveMenu(app),
 	)
