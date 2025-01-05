@@ -97,8 +97,9 @@ func (pxCanvas *PxCanvas) CreateRenderer() fyne.WidgetRenderer {
 
 // attempt to pan the canvas around the drawing area
 func (pxCanvas *PxCanvas) TryPan(previousCoord *fyne.PointEvent, ev *desktop.MouseEvent) {
+
 	//  desktop.MouseButtonTertiary is the scroll wheel
-	if previousCoord != nil && ev.Button == desktop.MouseButtonTertiary {
+	if previousCoord != nil && ev.Button == desktop.MouseButtonSecondary {
 		pxCanvas.Pan(*previousCoord, ev.PointEvent)
 	}
 }
